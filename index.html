@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>кверикс</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #00ff88;
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .terminal {
+            border: 2px solid #00ff88;
+            padding: 20px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 0 25px #00ff88;
+        }
+
+        .line {
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal">
+    <div class="line">👤 user: <b>кверикс</b></div>
+    <div class="line">👤 состаю в км 2 года</div>
+    <div class="line">👤 country: KZ</div>
+    <div class="line">> _<span class="blink">█</span></div>
+</div>
+
+</body>
+</html>
