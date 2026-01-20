@@ -28,7 +28,8 @@ canvas {
 .passport {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: flex-start; /* фиксируем по верхнему краю */
+    justify-content: flex-start;
     position: relative;
     z-index: 1;
     width: 90%;
@@ -42,8 +43,9 @@ canvas {
     line-height: 1.6;
 }
 
-/* Секция фото */
+/* Фото */
 .photo {
+    flex-shrink: 0; /* не сжимается */
     width: 120px;
     height: 120px;
     border: 2px solid #00ff88;
@@ -51,17 +53,17 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Обрезает лишнее */
-    border-radius: 8px; /* Лёгкое закругление углов */
+    overflow: hidden;
+    border-radius: 8px;
 }
 
 .photo img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Центрирует и обрезает фото */
+    object-fit: cover; /* центрирует и обрезает фото */
 }
 
-/* Секция текста */
+/* Текст */
 .text {
     flex: 1;
 }
@@ -72,6 +74,22 @@ canvas {
 
 @keyframes blink {
     50% { opacity: 0; }
+}
+
+/* Адаптив для маленьких экранов (Telegram) */
+@media screen and (max-width: 480px) {
+    .passport {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+    .photo {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    .text {
+        text-align: center;
+    }
 }
 </style>
 </head>
