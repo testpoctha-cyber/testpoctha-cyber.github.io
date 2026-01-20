@@ -13,26 +13,30 @@ body {
     overflow: hidden;
     font-family: 'JetBrains Mono', monospace;
     color: #00ff88;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* вертикальное центрирование */
+    height: 100vh;
 }
 
 canvas {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
 }
 
 .card {
     position: relative;
     z-index: 1;
-    margin: 20px auto;
-    width: 95%;
-    max-width: 520px;
-    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    padding: 25px;
     border: 2px solid #00ff88;
     box-shadow: 0 0 25px #00ff88;
     background: rgba(0,0,0,0.65);
-
-    /* ВАЖНО: чтобы текст не вылазил */
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.6;
@@ -81,15 +85,13 @@ function drawMatrix() {
         const char = chars[Math.floor(Math.random() * chars.length)];
         ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-        }
+        if (drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
     }
 }
 setInterval(drawMatrix, 50);
 
-// ===== ПЕЧАТЬ ТЕКСТА (ТОЛЬКО ТВОЁ) =====
+// ===== ПЕЧАТЬ ТВОЕГО ТЕКСТА =====
 const lines = [
     "name: кверикс",
     "",
