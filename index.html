@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>kwerixbio</title>
-
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
-
 <style>
 body {
     margin: 0;
@@ -15,16 +13,13 @@ body {
     color: #00ff88;
     display: flex;
     justify-content: center;
-    align-items: center; /* вертикальное центрирование */
+    align-items: center;
     height: 100vh;
 }
 
 canvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: 0;
 }
 
@@ -58,34 +53,35 @@ canvas {
 <div class="card" id="output"></div>
 
 <script>
-// ===== MATRIX ФОН =====
+// ===== MATRIX + СЛОВА НА ФОНЕ =====
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 
+let width, height;
 function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
 }
 resize();
 window.addEventListener('resize', resize);
 
-const chars = '01';
-const fontSize = 16;
-let columns = Math.floor(canvas.width / fontSize);
+const chars = ['0','1','Osint','Geoint','Target','Telegram','Snos'];
+const fontSize = 18;
+const columns = Math.floor(window.innerWidth / fontSize);
 let drops = Array(columns).fill(0);
 
 function drawMatrix() {
     ctx.fillStyle = 'rgba(0,0,0,0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, width, height);
 
     ctx.fillStyle = '#00ff88';
     ctx.font = fontSize + 'px JetBrains Mono';
 
     for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-        if (drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        if (drops[i]*fontSize > height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
     }
 }
