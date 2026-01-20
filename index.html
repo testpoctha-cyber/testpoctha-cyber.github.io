@@ -24,37 +24,21 @@ canvas {
 .card {
     position: relative;
     z-index: 1;
+    margin: 20px auto;
+    width: 95%;
+    max-width: 520px;
+    padding: 20px;
     border: 2px solid #00ff88;
     box-shadow: 0 0 25px #00ff88;
-    padding: 20px;
-    width: 90%;
-    max-width: 460px;
-    display: flex;
-    gap: 15px;
-    background: rgba(0,0,0,0.6);
-    margin: auto;
-    top: 50%;
-    transform: translateY(-50%);
-}
+    background: rgba(0,0,0,0.65);
 
-.avatar {
-    width: 70px;
-    height: 70px;
-    border: 2px solid #00ff88;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 36px;
-}
-
-.text {
+    /* ВАЖНО: чтобы текст не вылазил */
+    white-space: pre-wrap;
+    word-break: break-word;
     line-height: 1.6;
-    white-space: pre;
 }
 
 .cursor {
-    display: inline-block;
     animation: blink 1s infinite;
 }
 
@@ -67,13 +51,10 @@ canvas {
 
 <canvas id="matrix"></canvas>
 
-<div class="card">
-    <div class="avatar">👤</div>
-    <div class="text" id="output"></div>
-</div>
+<div class="card" id="output"></div>
 
 <script>
-// ===== MATRIX BACKGROUND =====
+// ===== MATRIX ФОН =====
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 
@@ -108,40 +89,43 @@ function drawMatrix() {
 }
 setInterval(drawMatrix, 50);
 
-// ===== TYPEWRITER EFFECT =====
+// ===== ПЕЧАТЬ ТЕКСТА (ТОЛЬКО ТВОЁ) =====
 const lines = [
     "name: кверикс",
+    "",
     "age: 16",
+    "",
     "country: KZ",
+    "",
     "numbers: +77764613713",
     "",
     "состаю в км более 2-3 года, никакой сферой не интересуюсь"
 ];
 
 const output = document.getElementById("output");
-let lineIndex = 0;
-let charIndex = 0;
+let line = 0;
+let char = 0;
 
-function typeLine() {
-    if (lineIndex >= lines.length) {
+function typeText() {
+    if (line >= lines.length) {
         output.innerHTML += "\n> _<span class='cursor'>█</span>";
         return;
     }
 
-    if (charIndex < lines[lineIndex].length) {
-        output.innerHTML += lines[lineIndex][charIndex];
-        charIndex++;
-        setTimeout(typeLine, 40);
+    if (char < lines[line].length) {
+        output.innerHTML += lines[line][char];
+        char++;
+        setTimeout(typeText, 35);
     } else {
         output.innerHTML += "\n";
-        lineIndex++;
-        charIndex = 0;
-        setTimeout(typeLine, 400);
+        line++;
+        char = 0;
+        setTimeout(typeText, 300);
     }
 }
 
-typeLine();
+typeText();
 </script>
 
 </body>
-    </html>
+</html>
