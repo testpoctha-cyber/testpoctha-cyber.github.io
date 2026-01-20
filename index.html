@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>kwerixbio</title>
+
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+
 <style>
 body {
     margin: 0;
@@ -23,18 +25,44 @@ canvas {
     z-index: 0;
 }
 
-.card {
+/* ПАСПОРТ */
+.passport {
     position: relative;
     z-index: 1;
     width: 90%;
-    max-width: 500px;
+    max-width: 520px;
     padding: 25px;
+    background: rgba(0,0,0,0.75);
     border: 2px solid #00ff88;
-    box-shadow: 0 0 25px #00ff88;
-    background: rgba(0,0,0,0.65);
-    white-space: pre-wrap;
-    word-break: break-word;
-    line-height: 1.6;
+    box-shadow: 0 0 30px #00ff88;
+}
+
+.header {
+    text-align: center;
+    border-bottom: 1px solid #00ff88;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.section {
+    margin-bottom: 12px;
+}
+
+.label {
+    opacity: 0.7;
+}
+
+.value {
+    margin-left: 10px;
+}
+
+.footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #00ff88;
+    font-size: 14px;
+    opacity: 0.9;
 }
 
 .cursor {
@@ -50,79 +78,57 @@ canvas {
 
 <canvas id="matrix"></canvas>
 
-<div class="card" id="output"></div>
+<div class="passport" id="passport">
+    <div class="header">
+        DIGITAL PASSPORT
+    </div>
+
+    <div class="section">🧑 <span class="label">name:</span><span class="value">кверикс</span></div>
+    <div class="section">🎂 <span class="label">age:</span><span class="value">16</span></div>
+    <div class="section">🌍 <span class="label">country:</span><span class="value">KZ</span></div>
+    <div class="section">📞 <span class="label">numbers:</span><span class="value">+77764613713</span></div>
+
+    <div class="footer">
+        состаю в км более 2-3 года, никакой сферой не интересуюсь<span class="cursor">█</span>
+    </div>
+</div>
 
 <script>
-// ===== MATRIX + СЛОВА НА ФОНЕ =====
+// МЯГКИЙ MATRIX ФОН
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 
-let width, height;
 function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 resize();
 window.addEventListener('resize', resize);
 
-const chars = ['0','1','Osint','Geoint','Target','Telegram','Snos'];
-const fontSize = 18;
-const columns = Math.floor(window.innerWidth / fontSize);
+const chars = '01';
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
 let drops = Array(columns).fill(0);
 
 function drawMatrix() {
-    ctx.fillStyle = 'rgba(0,0,0,0.05)';
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = '#00ff88';
     ctx.font = fontSize + 'px JetBrains Mono';
 
     for (let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-        if (drops[i]*fontSize > height && Math.random() > 0.975) drops[i] = 0;
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+            drops[i] = 0;
+        }
         drops[i]++;
     }
 }
-setInterval(drawMatrix, 50);
 
-// ===== ПЕЧАТЬ ТВОЕГО ТЕКСТА =====
-const lines = [
-    "name: кверикс",
-    "",
-    "age: 16",
-    "",
-    "country: KZ",
-    "",
-    "numbers: +77764613713",
-    "",
-    "состаю в км более 2-3 года, никакой сферой не интересуюсь"
-];
-
-const output = document.getElementById("output");
-let line = 0;
-let char = 0;
-
-function typeText() {
-    if (line >= lines.length) {
-        output.innerHTML += "\n> _<span class='cursor'>█</span>";
-        return;
-    }
-
-    if (char < lines[line].length) {
-        output.innerHTML += lines[line][char];
-        char++;
-        setTimeout(typeText, 35);
-    } else {
-        output.innerHTML += "\n";
-        line++;
-        char = 0;
-        setTimeout(typeText, 300);
-    }
-}
-
-typeText();
+setInterval(drawMatrix, 60);
 </script>
 
 </body>
