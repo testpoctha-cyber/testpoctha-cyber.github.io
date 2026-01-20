@@ -5,7 +5,6 @@
 <title>kwerixbio</title>
 
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
-
 <style>
 body {
     margin: 0;
@@ -25,11 +24,15 @@ canvas {
     z-index: 0;
 }
 
+/* ПАСПОРТ */
 .passport {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     position: relative;
     z-index: 1;
     width: 90%;
-    max-width: 500px;
+    max-width: 550px;
     padding: 25px;
     background: rgba(0,0,0,0.75);
     border: 2px solid #00ff88;
@@ -37,6 +40,26 @@ canvas {
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.6;
+}
+
+/* Секция фото */
+.photo {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #00ff88;
+    margin-right: 20px;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+/* Секция текста */
+.text {
+    flex: 1;
 }
 
 .cursor {
@@ -52,7 +75,12 @@ canvas {
 
 <canvas id="matrix"></canvas>
 
-<div class="passport" id="passport"></div>
+<div class="passport">
+    <div class="photo">
+        <img src="avatar.jpg" alt="avatar">
+    </div>
+    <div class="text" id="passport-text"></div>
+</div>
 
 <script>
 // ===== MATRIX ФОН =====
@@ -101,22 +129,22 @@ const lines = [
     "состаю в км более 2-3 года, никакой сферой не интересуюсь"
 ];
 
-const passport = document.getElementById("passport");
+const passportText = document.getElementById("passport-text");
 let line = 0;
 let char = 0;
 
 function typeText() {
     if (line >= lines.length) {
-        passport.innerHTML += "\n> _<span class='cursor'>█</span>";
+        passportText.innerHTML += "\n> _<span class='cursor'>█</span>";
         return;
     }
 
     if (char < lines[line].length) {
-        passport.innerHTML += lines[line][char];
+        passportText.innerHTML += lines[line][char];
         char++;
         setTimeout(typeText, 35);
     } else {
-        passport.innerHTML += "\n";
+        passportText.innerHTML += "\n";
         line++;
         char = 0;
         setTimeout(typeText, 300);
