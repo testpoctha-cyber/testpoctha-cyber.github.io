@@ -1,55 +1,147 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>кверикс</title>
+<meta charset="UTF-8">
+<title>kwerixbio</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            background: #000;
-            color: #00ff88;
-            font-family: 'JetBrains Mono', monospace;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+<style>
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    color: #00ff88;
+}
 
-        .terminal {
-            border: 2px solid #00ff88;
-            padding: 20px;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 0 25px #00ff88;
-        }
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+}
 
-        .line {
-            margin: 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.card {
+    position: relative;
+    z-index: 1;
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
+    padding: 20px;
+    width: 90%;
+    max-width: 460px;
+    display: flex;
+    gap: 15px;
+    background: rgba(0,0,0,0.6);
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-        .blink {
-            animation: blink 1s infinite;
-        }
+.avatar {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+}
 
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-    </style>
+.text {
+    line-height: 1.6;
+    white-space: pre;
+}
+
+.cursor {
+    display: inline-block;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+</style>
 </head>
 <body>
 
-<div class="terminal">
-    <div class="line">👤 user: <b>кверикс</b></div>
-    <div class="line">👤 состаю в км 2 года</div>
-    <div class="line">👤 country: KZ</div>
-    <div class="line">> _<span class="blink">█</span></div>
+<canvas id="matrix"></canvas>
+
+<div class="card">
+    <div class="avatar">👤</div>
+    <div class="text" id="output"></div>
 </div>
 
+<script>
+// ===== MATRIX BACKGROUND =====
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const chars = '01';
+const fontSize = 16;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(0);
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff88';
+    ctx.font = fontSize + 'px JetBrains Mono';
+
+    for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 50);
+
+// ===== TYPEWRITER EFFECT =====
+const lines = [
+    "name: кверикс",
+    "age: 16",
+    "country: KZ",
+    "numbers: +77764613713",
+    "",
+    "состаю в км более 2-3 года, никакой сферой не интересуюсь"
+];
+
+const output = document.getElementById("output");
+let lineIndex = 0;
+let charIndex = 0;
+
+function typeLine() {
+    if (lineIndex >= lines.length) {
+        output.innerHTML += "\n> _<span class='cursor'>█</span>";
+        return;
+    }
+
+    if (charIndex < lines[lineIndex].length) {
+        output.innerHTML += lines[lineIndex][charIndex];
+        charIndex++;
+        setTimeout(typeLine, 40);
+    } else {
+        output.innerHTML += "\n";
+        lineIndex++;
+        charIndex = 0;
+        setTimeout(typeLine, 400);
+    }
+}
+
+typeLine();
+</script>
+
 </body>
-</html>
+    </html>
