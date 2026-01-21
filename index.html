@@ -2,170 +2,179 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>kwerixbio</title>
 
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
-
 body {
     margin: 0;
-    height: 100vh;
     background: black;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
     color: #00ff88;
-    font-family: "Courier New", monospace;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    height: 100vh;
 }
 
-/* MATRIX CANVAS */
 canvas {
     position: fixed;
     inset: 0;
     z-index: 0;
 }
 
-/* WRAPPER */
-.wrapper {
-    position: relative;
-    z-index: 2;
-    transform: scale(0.94);
-}
-
-/* PASSPORT */
+/* ПАСПОРТ */
 .passport {
     display: flex;
-    gap: 20px;
-    padding: 24px;
-    background: rgba(0, 15, 10, 0.9);
-    border: 1px solid rgba(0,255,120,.6);
-    animation: pulse 3s infinite ease-in-out;
+    flex-direction: row;
+    align-items: flex-start; /* фиксируем по верхнему краю */
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
+    width: 90%;
+    max-width: 550px;
+    padding: 25px;
+    background: rgba(0,0,0,0.75);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
 }
 
-/* PULSE */
-@keyframes pulse {
-    0% { box-shadow: 0 0 10px rgba(0,255,120,.3); }
-    50% { box-shadow: 0 0 22px rgba(0,255,120,.6); }
-    100% { box-shadow: 0 0 10px rgba(0,255,120,.3); }
-}
-
-/* PHOTO */
+/* Фото */
 .photo {
+    flex-shrink: 0; /* не сжимается */
     width: 120px;
-    height: 160px;
-    border: 1px solid rgba(0,255,120,.4);
+    height: 120px;
+    border: 2px solid #00ff88;
+    margin-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
-    flex-shrink: 0;
+    border-radius: 8px;
 }
+
 .photo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* центрирует и обрезает фото */
 }
 
-/* TERMINAL TEXT */
-.info {
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-line;
+/* Текст */
+.text {
+    flex: 1;
 }
 
-/* CURSOR */
 .cursor {
-    display: inline-block;
-    width: 8px;
-    background: #00ff88;
-    margin-left: 4px;
     animation: blink 1s infinite;
 }
+
 @keyframes blink {
     50% { opacity: 0; }
 }
 
-/* GRAIN */
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    z-index: 3;
+/* Адаптив для маленьких экранов (Telegram) */
+@media screen and (max-width: 480px) {
+    .passport {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+    .photo {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    .text {
+        text-align: center;
+    }
 }
 </style>
 </head>
-
 <body>
 
 <canvas id="matrix"></canvas>
 
-<div class="wrapper">
-    <div class="passport">
-        <div class="photo">
-            <img src="avatar.jpg" alt="avatar">
-        </div>
-        <div class="info" id="terminal"></div>
+<div class="passport">
+    <div class="photo">
+        <img src="avatar.jpg" alt="avatar">
     </div>
+    <div class="text" id="passport-text"></div>
 </div>
 
 <script>
-/* === MATRIX BACKGROUND === */
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
+// ===== MATRIX ФОН =====
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
 
 function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 resize();
-addEventListener("resize", resize);
+window.addEventListener('resize', resize);
 
-const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%";
-const fontSize = 14;
-const columns = Math.floor(innerWidth / fontSize);
-const drops = Array(columns).fill(1);
+const chars = '01';
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(0);
 
 function drawMatrix() {
-    ctx.fillStyle = "rgba(0,0,0,0.08)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#00ff88";
-    ctx.font = fontSize + "px monospace";
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drops.forEach((y, i) => {
-        const text = letters[Math.floor(Math.random()*letters.length)];
-        ctx.fillText(text, i*fontSize, y*fontSize);
-        if (y*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    ctx.fillStyle = '#00ff88';
+    ctx.font = fontSize + 'px JetBrains Mono';
+
+    for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
-    });
+    }
 }
 setInterval(drawMatrix, 50);
 
-/* === TYPING EFFECT === */
-const text = `name: кверикс.
+// ===== ПЕЧАТЬ ТВОЕГО ТЕКСТА =====
+const lines = [
+    "name: кверикс",
+    "",
+    "age: 16",
+    "",
+    "country: KZ",
+    "",
+    "numbers: +77764613713",
+    "",
+    "состаю в км более 2-3 года, никакой сферой не интересуюсь"
+];
 
-age: 16
+const passportText = document.getElementById("passport-text");
+let line = 0;
+let char = 0;
 
-country: Kz
+function typeText() {
+    if (line >= lines.length) {
+        passportText.innerHTML += "\n> _<span class='cursor'>█</span>";
+        return;
+    }
 
-numbers: +77764613713
-
-состаю в км более 2-3 года, никакой сферой не интересуюсь`;
-
-const terminal = document.getElementById("terminal");
-let i = 0;
-
-function type() {
-    if (i < text.length) {
-        terminal.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, 35);
+    if (char < lines[line].length) {
+        passportText.innerHTML += lines[line][char];
+        char++;
+        setTimeout(typeText, 35);
     } else {
-        terminal.innerHTML += '<span class="cursor"></span>';
+        passportText.innerHTML += "\n";
+        line++;
+        char = 0;
+        setTimeout(typeText, 300);
     }
 }
-type();
+
+typeText();
 </script>
 
 </body>
-</html>
+    </html>
